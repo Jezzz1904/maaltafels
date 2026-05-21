@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maaltafels Oefenen 🌟</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* ── floating stars background ── */
+    .bg-star {
+      position: fixed;
+      pointer-events: none;
+      animation: float linear infinite;
+      opacity: 0.15;
+      font-size: 24px;
+      z-index: 0;
+    }
+    @keyframes float {
+      from { transform: translateY(110vh) rotate(0deg); }
+      to   { transform: translateY(-10vh) rotate(360deg); }
+    }
+
+    /* ── card ── */
+    .card {
+      background: white;
+      border-radius: 32px;
+      padding: 40px 48px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+      max-width: 540px;
+      width: 90%;
+      position: relative;
+      z-index: 1;
+      animation: popIn .4s cubic-bezier(.175,.885,.32,1.275);
+    }
+    @keyframes popIn {
+      from { transform: scale(.7); opacity: 0; }
+      to   { transform: scale(1);  opacity: 1; }
+    }
+
+    h1 { font-size: 2.2rem; color: #5c35c3; margin-bottom: 6px; }
+    .subtitle { color: #888; font-size: 1rem; margin-bottom: 28px; }
+
+    /* ── name screen ── */
+    #screen-name { display: block; }
+
+    .mascot { font-size: 5rem; margin-bottom: 8px; animation: bounce 1.2s ease-in-out infinite; }
+    @keyframes bounce {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-12px); }
+    }
+
+    .name-input {
+      width: 100%;
+      height: 64px;
+      font-size: 1.8rem;
+      font-weight: bold;
+      text-align: center;
+      border: 4px solid #ddd;
+      border-radius: 20px;
+      outline: none;
+      color: #333;
+      transition: border-color .2s;
+      margin-bottom: 16px;
+    }
+    .name-input:focus { border-color: #764ba2; }
+    .name-input::placeholder { color: #ccc; font-weight: normal; font-size: 1.3rem; }
+
+    .gender-label { font-size: .9rem; color: #aaa; margin-bottom: 10px; }
+    .gender-row { display: flex; gap: 12px; margin-bottom: 14px; }
+    .gender-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 14px 8px;
+      border: 3px solid #e5e5e5;
+      border-radius: 20px;
+      background: #f8f8f8;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: bold;
+      color: #888;
+      transition: all .2s;
+    }
+    .gender-btn:hover { border-color: #ccc; transform: scale(1.04); }
+    .gender-btn .g-icon { font-size: 2.2rem; }
+    .gender-btn.gender-selected { color: white; border-color: transparent; }
+    .gender-btn.boy.gender-selected  { background: linear-gradient(135deg, #0072ff, #00c6ff); box-shadow: 0 4px 14px rgba(0,114,255,.4); }
+    .gender-btn.girl.gender-selected { background: linear-gradient(135deg, #f953c6, #b91d73); box-shadow: 0 4px 14px rgba(249,83,198,.4); }
+
+    .name-error {
+      color: #ef4444;
+      font-size: .95rem;
+      margin-bottom: 12px;
+      min-height: 20px;
+    }
+
+    /* ── themes ── */
+    body.theme-girl { background: linear-gradient(135deg, #f953c6 0%, #b91d73 100%); }
+    body.theme-girl h1,
+    body.theme-girl .pick-greeting,
+    body.theme-girl .result-score { color: #b91d73; }
+    body.theme-girl .name-input:focus,
+    body.theme-girl .answer-input:focus { border-color: #f953c6; }
+    body.theme-girl .progress-bar { background: linear-gradient(90deg, #f953c6, #f5576c); }
+    body.theme-girl .btn-primary { background: linear-gradient(135deg, #f953c6, #b91d73); box-shadow: 0 4px 14px rgba(249,83,198,.4); }
+    body.theme-girl .selection-bar { background: linear-gradient(135deg, #f953c6, #b91d73); }
+    body.theme-girl .btn-start-sel { color: #b91d73; }
+    body.theme-girl .diff-btn.normal { background: linear-gradient(135deg, #f953c6, #b91d73); box-shadow: 0 4px 12px rgba(249,83,198,.35); }
+    body.theme-girl .back-link:hover { color: #b91d73; }
+
+    body.theme-boy { background: linear-gradient(135deg, #0072ff 0%, #00c6ff 100%); }
+    body.theme-boy h1,
+    body.theme-boy .pick-greeting,
+    body.theme-boy .result-score { color: #0050cc; }
+    body.theme-boy .name-input:focus,
+    body.theme-boy .answer-input:focus { border-color: #0072ff; }
+    body.theme-boy .progress-bar { background: linear-gradient(90deg, #0072ff, #00c6ff); }
+    body.theme-boy .btn-primary { background: linear-gradient(135deg, #0072ff, #00c6ff); box-shadow: 0 4px 14px rgba(0,114,255,.4); }
+    body.theme-boy .selection-bar { background: linear-gradient(135deg, #0072ff, #00c6ff); }
+    body.theme-boy .btn-start-sel { color: #0050cc; }
+    body.theme-boy .diff-btn.normal { background: linear-gradient(135deg, #0072ff, #00c6ff); box-shadow: 0 4px 12px rgba(0,114,255,.35); }
+    body.theme-boy .back-link:hover { color: #0072ff; }
+
+    /* ── scores screen ── */
+    #screen-scores { display: none; }
+
+    .scores-wrap {
+      max-height: 340px;
+      overflow-y: auto;
+      border: 2px solid #eee;
+      border-radius: 16px;
+      margin: 16px 0;
+    }
+    .scores-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .88rem;
+    }
+    .scores-table thead th {
+      background: #f5f5f5;
+      padding: 10px 10px;
+      text-align: left;
+      color: #888;
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .3px;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    .scores-table tbody td {
+      padding: 10px 10px;
+      border-bottom: 1px solid #f2f2f2;
+      color: #333;
+      vertical-align: middle;
+    }
+    .scores-table tbody tr:last-child td { border-bottom: none; }
+    .scores-table tbody tr:nth-child(even) td { background: #fafafa; }
+    .scores-table tbody tr.row-perfect td { background: #fffde7 !important; }
+    .score-stars { white-space: nowrap; font-size: .8rem; }
+    .score-chip {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-size: .78rem;
+      font-weight: bold;
+      color: white;
+    }
+    .chip-perfect { background: linear-gradient(135deg, #f7971e, #ffd200); }
+    .chip-good    { background: linear-gradient(135deg, #11998e, #38ef7d); }
+    .chip-ok      { background: linear-gradient(135deg, #667eea, #764ba2); }
+    .chip-low     { background: linear-gradient(135deg, #f5576c, #f093fb); }
+    .no-scores-msg { color: #aaa; text-align: center; padding: 28px 0; font-size: 1rem; }
+    .scores-link {
+      display: inline-block;
+      margin-top: 14px;
+      color: #aaa;
+      font-size: .9rem;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .scores-link:hover { color: #764ba2; }
+    body.theme-girl .scores-link:hover { color: #b91d73; }
+    body.theme-boy  .scores-link:hover { color: #0072ff; }
+
+    /* ── table-selector ── */
+    #screen-pick { display: none; }
+
+    .pick-greeting {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #5c35c3;
+      margin-bottom: 4px;
+    }
+
+    #screen-pick .grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .pick-btn {
+      color: white;
+      border: none;
+      border-radius: 16px;
+      padding: 18px 0;
+      font-size: 1.5rem;
+      font-weight: bold;
+      cursor: pointer;
+      position: relative;
+      transition: transform .15s, box-shadow .15s, opacity .15s;
+    }
+    .pick-btn:hover  { transform: scale(1.1); }
+    .pick-btn:active { transform: scale(.95); }
+    /* 🟢 easy: 1, 2, 5, 10 */
+    .pick-btn.t-easy { background: linear-gradient(135deg, #11998e, #38ef7d); box-shadow: 0 4px 12px rgba(17,153,142,.4); }
+    /* 🟠 medium: 3, 4, 6 */
+    .pick-btn.t-med  { background: linear-gradient(135deg, #f7971e, #ffd200); box-shadow: 0 4px 12px rgba(247,151,30,.4); }
+    /* 🔴 hard: 7, 8, 9 */
+    .pick-btn.t-hard { background: linear-gradient(135deg, #f5576c, #f093fb); box-shadow: 0 4px 12px rgba(245,87,108,.4); }
+    .pick-btn.dimmed { opacity: .38; transform: scale(.95); }
+    .pick-btn.selected {
+      outline: 3px solid white;
+      outline-offset: 2px;
+      transform: scale(1.08) !important;
+      opacity: 1 !important;
+    }
+    .pick-btn.selected::after {
+      content: '✓';
+      position: absolute;
+      top: 3px;
+      right: 7px;
+      font-size: .7rem;
+      font-weight: 900;
+    }
+
+    /* ── selection bar ── */
+    .selection-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border-radius: 18px;
+      padding: 11px 14px;
+      margin-top: 14px;
+      animation: slideDown .25s ease;
+    }
+    @keyframes slideDown {
+      from { transform: translateY(-8px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+    .sel-label { flex: 1; font-weight: bold; font-size: .9rem; text-align: left; }
+    .btn-start-sel {
+      background: white;
+      color: #5c35c3;
+      font-weight: 900;
+      font-size: .95rem;
+      border: none;
+      border-radius: 12px;
+      padding: 8px 14px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: transform .1s;
+    }
+    .btn-start-sel:active { transform: scale(.93); }
+    .btn-clear-sel {
+      font-size: .8rem;
+      color: rgba(255,255,255,.75);
+      cursor: pointer;
+      white-space: nowrap;
+      text-decoration: underline;
+    }
+    .btn-clear-sel:hover { color: white; }
+
+    /* ── question screen ── */
+    #screen-quiz { display: none; }
+
+    .progress-bar-wrap {
+      background: #eee;
+      border-radius: 99px;
+      height: 12px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #f093fb, #f5576c);
+      border-radius: 99px;
+      transition: width .4s ease;
+    }
+
+    .question-label {
+      font-size: 1rem;
+      color: #aaa;
+      margin-bottom: 8px;
+    }
+    .question {
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: #333;
+      margin-bottom: 32px;
+      min-height: 76px;
+    }
+
+    .answer-input {
+      width: 160px;
+      height: 72px;
+      font-size: 2.4rem;
+      font-weight: bold;
+      text-align: center;
+      border: 4px solid #ddd;
+      border-radius: 20px;
+      outline: none;
+      transition: border-color .2s;
+      color: #333;
+    }
+    .answer-input:focus { border-color: #764ba2; }
+    .answer-input.correct { border-color: #38ef7d; background: #f0fff4; }
+    .answer-input.wrong   { border-color: #f5576c; background: #fff5f5; animation: shake .4s; }
+
+    @keyframes shake {
+      0%,100%{ transform: translateX(0); }
+      20%    { transform: translateX(-10px); }
+      40%    { transform: translateX(10px); }
+      60%    { transform: translateX(-6px); }
+      80%    { transform: translateX(6px); }
+    }
+
+    .feedback {
+      margin-top: 16px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      min-height: 40px;
+    }
+    .feedback.good { color: #22c55e; }
+    .feedback.bad  { color: #ef4444; }
+
+    .score-badge {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      background: linear-gradient(135deg, #f7971e, #ffd200);
+      color: white;
+      font-weight: bold;
+      font-size: 1rem;
+      padding: 6px 14px;
+      border-radius: 99px;
+      box-shadow: 0 2px 8px rgba(255,200,0,.4);
+    }
+
+    /* ── number pad ── */
+    .numpad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 24px;
+      max-width: 280px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .num-btn {
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      color: white;
+      font-size: 1.6rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 16px;
+      padding: 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(79,172,254,.35);
+      transition: transform .12s;
+    }
+    .num-btn:active { transform: scale(.9); }
+    .num-btn.del { background: linear-gradient(135deg, #f093fb, #f5576c); box-shadow: 0 4px 10px rgba(240,93,251,.35); }
+    .num-btn.ok  { background: linear-gradient(135deg, #11998e, #38ef7d); box-shadow: 0 4px 10px rgba(56,239,125,.4); font-size: 1.2rem; }
+
+    /* ── result screen ── */
+    #screen-result { display: none; }
+    .big-emoji { font-size: 5rem; margin: 12px 0; }
+    .result-score { font-size: 2.6rem; font-weight: 900; color: #5c35c3; margin: 8px 0; }
+    .stars { font-size: 2.4rem; letter-spacing: 4px; margin: 8px 0; }
+    .result-msg { color: #666; font-size: 1.05rem; margin-bottom: 24px; }
+
+    .btn-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      padding: 14px 28px;
+      font-size: 1.05rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: transform .15s;
+    }
+    .btn:active { transform: scale(.95); }
+    .btn-primary   { background: linear-gradient(135deg, #667eea, #764ba2); color: white; box-shadow: 0 4px 14px rgba(102,126,234,.45); }
+    .btn-secondary { background: #f0f0f0; color: #555; }
+
+    /* ── confetti ── */
+    .confetti-piece {
+      position: fixed;
+      border-radius: 2px;
+      pointer-events: none;
+      z-index: 999;
+      animation: confettiFall linear forwards;
+    }
+    @keyframes confettiFall {
+      0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* ── mix difficulty ── */
+    .mix-section {
+      margin-top: 16px;
+    }
+    .mix-label {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #888;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+    .diff-row {
+      display: flex;
+      gap: 10px;
+    }
+    .diff-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      padding: 12px 6px;
+      border: none;
+      border-radius: 18px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .diff-btn:hover  { transform: scale(1.07); }
+    .diff-btn:active { transform: scale(.94); }
+    .diff-icon { font-size: 1.6rem; }
+    .diff-name { font-size: .95rem; font-weight: bold; color: white; }
+    .diff-desc { font-size: .72rem; color: rgba(255,255,255,.8); }
+    .diff-btn.easy   { background: linear-gradient(135deg, #11998e, #38ef7d); box-shadow: 0 4px 12px rgba(17,153,142,.35); }
+    .diff-btn.normal { background: linear-gradient(135deg, #667eea, #764ba2); box-shadow: 0 4px 12px rgba(102,126,234,.35); }
+    .diff-btn.hard   { background: linear-gradient(135deg, #f7971e, #f5576c); box-shadow: 0 4px 12px rgba(245,87,108,.35); }
+
+    /* ── back link ── */
+    .back-link {
+      display: inline-block;
+      margin-top: 16px;
+      color: #aaa;
+      font-size: .9rem;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .back-link:hover { color: #764ba2; }
+  </style>
+</head>
+<body>
+
+<script>
+  const bgEmojis = ['⭐','🌟','✨','💫'];
+  for (let i = 0; i < 18; i++) {
+    const s = document.createElement('div');
+    s.className = 'bg-star';
+    s.textContent = bgEmojis[i % bgEmojis.length];
+    s.style.left = Math.random() * 100 + 'vw';
+    s.style.fontSize = (14 + Math.random() * 20) + 'px';
+    s.style.animationDuration = (8 + Math.random() * 12) + 's';
+    s.style.animationDelay = (Math.random() * -20) + 's';
+    document.body.appendChild(s);
+  }
+</script>
+
+<!-- ══ SCREEN 0: name ══ -->
+<div class="card" id="screen-name">
+  <div class="mascot" id="name-mascot">⭐</div>
+  <h1>Hallo!</h1>
+  <p class="subtitle">Hoe heet jij?</p>
+  <input class="name-input" id="name-input" type="text" maxlength="20"
+         placeholder="Jouw naam..." autocomplete="off"
+         onkeydown="if(event.key==='Enter') enterName()">
+  <p class="gender-label">Ben jij een...</p>
+  <div class="gender-row">
+    <button class="gender-btn boy" id="btn-boy" onclick="selectGender('boy')">
+      <span class="g-icon">🚀</span>
+      Jongen
+    </button>
+    <button class="gender-btn girl" id="btn-girl" onclick="selectGender('girl')">
+      <span class="g-icon">🦄</span>
+      Meisje
+    </button>
+  </div>
+  <div class="name-error" id="name-error"></div>
+  <button class="btn btn-primary" style="width:100%;font-size:1.2rem" onclick="enterName()">
+    Laten we beginnen!
+  </button>
+</div>
+
+<!-- ══ SCREEN 1: pick a table ══ -->
+<div class="card" id="screen-pick">
+  <p class="pick-greeting" id="pick-greeting"></p>
+  <h1>🌟 Maaltafels 🌟</h1>
+  <p class="subtitle">Tik op één of meerdere tafels!</p>
+  <div class="grid">
+    <button class="pick-btn t-easy" id="pb-1"  onclick="toggleTable(1)">1</button>
+    <button class="pick-btn t-easy" id="pb-2"  onclick="toggleTable(2)">2</button>
+    <button class="pick-btn t-med"  id="pb-3"  onclick="toggleTable(3)">3</button>
+    <button class="pick-btn t-med"  id="pb-4"  onclick="toggleTable(4)">4</button>
+    <button class="pick-btn t-easy" id="pb-5"  onclick="toggleTable(5)">5</button>
+    <button class="pick-btn t-med"  id="pb-6"  onclick="toggleTable(6)">6</button>
+    <button class="pick-btn t-hard" id="pb-7"  onclick="toggleTable(7)">7</button>
+    <button class="pick-btn t-hard" id="pb-8"  onclick="toggleTable(8)">8</button>
+    <button class="pick-btn t-hard" id="pb-9"  onclick="toggleTable(9)">9</button>
+    <button class="pick-btn t-easy" id="pb-10" onclick="toggleTable(10)">10</button>
+  </div>
+
+  <div class="selection-bar" id="selection-bar" style="display:none">
+    <span class="sel-label" id="sel-label"></span>
+    <button class="btn-start-sel" onclick="startSelected()">🚀 Start!</button>
+    <span class="btn-clear-sel" onclick="clearSelection()">✕ Wis</span>
+  </div>
+  <br>
+  <div class="mix-section">
+    <div class="mix-label">🎲 Gemengde opgaven</div>
+    <div class="diff-row">
+      <button class="diff-btn easy"   onclick="startMix('easy')">
+        <span class="diff-icon">🌱</span>
+        <span class="diff-name">Makkelijk</span>
+        <span class="diff-desc">1, 2, 5 &amp; 10</span>
+      </button>
+      <button class="diff-btn normal" onclick="startMix('normal')">
+        <span class="diff-icon">⭐</span>
+        <span class="diff-name">Normaal</span>
+        <span class="diff-desc">Tafels 1–10</span>
+      </button>
+      <button class="diff-btn hard"   onclick="startMix('hard')">
+        <span class="diff-icon">🔥</span>
+        <span class="diff-name">Moeilijk</span>
+        <span class="diff-desc">6, 7, 8 &amp; 9</span>
+      </button>
+    </div>
+  </div>
+  <span class="scores-link" onclick="showScores()">📊 Scorebord bekijken</span>
+</div>
+
+<!-- ══ SCREEN 2: quiz ══ -->
+<div class="card" id="screen-quiz">
+  <div class="score-badge" id="score-badge">⭐ 0</div>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progress-bar"></div>
+  </div>
+
+  <p class="question-label" id="q-label">Vraag 1 van 10</p>
+  <div class="question" id="q-text"></div>
+
+  <input class="answer-input" id="answer-input" type="number" min="0" inputmode="numeric"
+         placeholder="?" autocomplete="off" onkeydown="handleKey(event)">
+
+  <div class="feedback" id="feedback"></div>
+
+  <div class="numpad">
+    <button class="num-btn" onclick="numPress('1')">1</button>
+    <button class="num-btn" onclick="numPress('2')">2</button>
+    <button class="num-btn" onclick="numPress('3')">3</button>
+    <button class="num-btn" onclick="numPress('4')">4</button>
+    <button class="num-btn" onclick="numPress('5')">5</button>
+    <button class="num-btn" onclick="numPress('6')">6</button>
+    <button class="num-btn" onclick="numPress('7')">7</button>
+    <button class="num-btn" onclick="numPress('8')">8</button>
+    <button class="num-btn" onclick="numPress('9')">9</button>
+    <button class="num-btn del" onclick="numPress('del')">⌫</button>
+    <button class="num-btn" onclick="numPress('0')">0</button>
+    <button class="num-btn ok"  onclick="checkAnswer()">✔ OK</button>
+  </div>
+
+  <span class="back-link" onclick="showPick()">← Andere tafel kiezen</span>
+</div>
+
+<!-- ══ SCREEN 3: result ══ -->
+<div class="card" id="screen-result">
+  <div class="big-emoji" id="result-emoji"></div>
+  <h1 id="result-title"></h1>
+  <div class="stars" id="result-stars"></div>
+  <div class="result-score" id="result-score"></div>
+  <p class="result-msg" id="result-msg"></p>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="retryQuiz()">🔄 Nog een keer</button>
+    <button class="btn btn-secondary" onclick="showPick()">🏠 Andere tafel</button>
+  </div>
+  <span class="scores-link" onclick="showScores()">📊 Scorebord bekijken</span>
+</div>
+
+<!-- ══ SCREEN 4: scorebord ══ -->
+<div class="card" id="screen-scores">
+  <h1>📊 Scorebord</h1>
+  <p class="subtitle" id="scores-subtitle"></p>
+
+  <div class="scores-wrap">
+    <table class="scores-table">
+      <thead>
+        <tr>
+          <th>Datum</th>
+          <th>Naam</th>
+          <th>Modus</th>
+          <th>Score</th>
+          <th>⭐</th>
+        </tr>
+      </thead>
+      <tbody id="scores-tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="showPick()">← Terug</button>
+    <button class="btn btn-secondary" onclick="clearScores()">🗑️ Wis alles</button>
+  </div>
+</div>
+
+<script>
+  const ALL_SCREENS = ['screen-name','screen-pick','screen-quiz','screen-result','screen-scores'];
+
+  function show(id) {
+    ALL_SCREENS.forEach(s =>
+      document.getElementById(s).style.display = s === id ? 'block' : 'none'
+    );
+  }
+
+  // ── state ──
+  let playerName = '';
+  let playerGender = '';
+  let currentTable = 0;
+  let isMix = false;
+  let isMulti = false;
+  let currentDiff = 'normal';
+  let selectedTables = new Set();
+  let multiTables = [];
+  let questions = [];
+  let qi = 0;
+  let score = 0;
+  const totalQ = 10;
+  let waitingNext = false;
+
+  // ── name screen ──
+  function selectGender(g) {
+    playerGender = g;
+    document.getElementById('btn-boy').classList.toggle('gender-selected', g === 'boy');
+    document.getElementById('btn-girl').classList.toggle('gender-selected', g === 'girl');
+    document.getElementById('name-mascot').textContent = g === 'boy' ? '🚀' : '🦄';
+  }
+
+  function enterName() {
+    const inp = document.getElementById('name-input');
+    const val = inp.value.trim();
+    const err = document.getElementById('name-error');
+    if (!val) {
+      err.textContent = 'Vul eerst je naam in! 👇';
+      inp.focus();
+      return;
+    }
+    if (!playerGender) {
+      err.textContent = 'Kies ook jongen of meisje! 👆';
+      return;
+    }
+    playerName = val.charAt(0).toUpperCase() + val.slice(1);
+    err.textContent = '';
+    document.body.classList.remove('theme-boy', 'theme-girl');
+    document.body.classList.add(playerGender === 'boy' ? 'theme-boy' : 'theme-girl');
+    showPick();
+  }
+
+  // ── pick screen ──
+  function showPick() {
+    document.getElementById('pick-greeting').textContent = `Hoi ${playerName}! 👋`;
+    clearSelection();
+    show('screen-pick');
+  }
+
+  // ── multi-select ──
+  function toggleTable(n) {
+    const btn = document.getElementById(`pb-${n}`);
+    if (selectedTables.has(n)) {
+      selectedTables.delete(n);
+      btn.classList.remove('selected');
+    } else {
+      selectedTables.add(n);
+      btn.classList.add('selected');
+    }
+    updateSelectionBar();
+  }
+
+  function updateSelectionBar() {
+    const bar = document.getElementById('selection-bar');
+    const count = selectedTables.size;
+    // dim/undim all buttons
+    for (let n = 1; n <= 10; n++) {
+      const btn = document.getElementById(`pb-${n}`);
+      if (count === 0 || selectedTables.has(n)) btn.classList.remove('dimmed');
+      else btn.classList.add('dimmed');
+    }
+    if (count === 0) { bar.style.display = 'none'; return; }
+    bar.style.display = 'flex';
+    const sorted = [...selectedTables].sort((a, b) => a - b);
+    const label = count === 1
+      ? `Tafel ${sorted[0]} geselecteerd`
+      : `Tafels ${sorted.join(', ')} geselecteerd`;
+    document.getElementById('sel-label').textContent = `✓ ${label}`;
+  }
+
+  function clearSelection() {
+    selectedTables.clear();
+    for (let n = 1; n <= 10; n++) {
+      const btn = document.getElementById(`pb-${n}`);
+      if (btn) { btn.classList.remove('selected', 'dimmed'); }
+    }
+    document.getElementById('selection-bar').style.display = 'none';
+  }
+
+  function startSelected() {
+    isMulti = true;
+    isMix = false;
+    multiTables = [...selectedTables].sort((a, b) => a - b);
+    questions = buildMultiQuestions(multiTables);
+    qi = 0; score = 0; waitingNext = false;
+    show('screen-quiz');
+    renderQuestion();
+  }
+
+  // ── helpers ──
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function buildQuestions(table) {
+    const pool = [];
+    for (let i = 1; i <= 10; i++) pool.push({ a: table, b: i, ans: table * i });
+    return shuffle(pool).slice(0, totalQ);
+  }
+
+  function buildMultiQuestions(tables) {
+    const pool = [];
+    for (const t of tables)
+      for (let i = 1; i <= 10; i++) pool.push({ a: t, b: i, ans: t * i });
+    return shuffle(pool).slice(0, totalQ);
+  }
+
+  const diffConfig = {
+    easy:   { tables: [1,2,5,10],      label: '🌱 Makkelijk' },
+    normal: { tables: [1,2,3,4,5,6,7,8,9,10], label: '⭐ Normaal'   },
+    hard:   { tables: [6,7,8,9],       label: '🔥 Moeilijk'  },
+  };
+
+  function buildMixQuestions(difficulty) {
+    const tables = diffConfig[difficulty].tables;
+    const pool = [];
+    for (const t of tables)
+      for (let i = 1; i <= 10; i++) pool.push({ a: t, b: i, ans: t * i });
+    return shuffle(pool).slice(0, totalQ);
+  }
+
+  // ── quiz start ──
+  function startQuiz(table) {
+    currentTable = table;
+    isMix = false; isMulti = false;
+    questions = buildQuestions(table);
+    qi = 0; score = 0; waitingNext = false;
+    show('screen-quiz');
+    renderQuestion();
+  }
+
+  function startMix(difficulty) {
+    isMix = true; isMulti = false;
+    currentDiff = difficulty;
+    questions = buildMixQuestions(difficulty);
+    qi = 0; score = 0; waitingNext = false;
+    show('screen-quiz');
+    renderQuestion();
+  }
+
+  function retryQuiz() {
+    if (isMulti)     { questions = buildMultiQuestions(multiTables); qi = 0; score = 0; waitingNext = false; show('screen-quiz'); renderQuestion(); }
+    else if (isMix)  { startMix(currentDiff); }
+    else             { startQuiz(currentTable); }
+  }
+
+  // ── quiz logic ──
+  function renderQuestion() {
+    const q = questions[qi];
+    const modeTag = isMix   ? ` · ${diffConfig[currentDiff].label}`
+                 : isMulti ? ` · Tafels ${multiTables.join(', ')}` : '';
+    document.getElementById('q-label').textContent = `Vraag ${qi + 1} van ${totalQ}${modeTag}`;
+    document.getElementById('q-text').textContent = `${q.a} × ${q.b} = ?`;
+    document.getElementById('progress-bar').style.width = (qi / totalQ * 100) + '%';
+    document.getElementById('score-badge').textContent = `⭐ ${score}`;
+    document.getElementById('feedback').textContent = '';
+    document.getElementById('feedback').className = 'feedback';
+    const inp = document.getElementById('answer-input');
+    inp.value = '';
+    inp.className = 'answer-input';
+    inp.disabled = false;
+    setTimeout(() => inp.focus(), 50);
+  }
+
+  function numPress(val) {
+    if (waitingNext) return;
+    const inp = document.getElementById('answer-input');
+    if (val === 'del') inp.value = inp.value.slice(0, -1);
+    else if (inp.value.length < 4) inp.value += val;
+    inp.focus();
+  }
+
+  function handleKey(e) {
+    if (e.key === 'Enter') checkAnswer();
+  }
+
+  function checkAnswer() {
+    if (waitingNext) return;
+    const inp = document.getElementById('answer-input');
+    const val = parseInt(inp.value, 10);
+    if (isNaN(val) || inp.value.trim() === '') return;
+
+    const correct = questions[qi].ans;
+    const fb = document.getElementById('feedback');
+
+    if (val === correct) {
+      score++;
+      inp.className = 'answer-input correct';
+      fb.className = 'feedback good';
+      fb.textContent = pickGood();
+      spawnStars();
+    } else {
+      inp.className = 'answer-input wrong';
+      fb.className = 'feedback bad';
+      fb.textContent = `❌ Het antwoord is ${correct}`;
+    }
+
+    inp.disabled = true;
+    waitingNext = true;
+    document.getElementById('score-badge').textContent = `⭐ ${score}`;
+
+    setTimeout(() => {
+      waitingNext = false;
+      qi++;
+      if (qi >= totalQ) showResult();
+      else renderQuestion();
+    }, val === correct ? 900 : 1500);
+  }
+
+  // name appears in ~half the good messages
+  const goodTemplates = [
+    n => `🎉 Super goed, ${n}!`,
+    n => `⭐ Wauw, ${n}!`,
+    n => `🌟 Geweldig, ${n}!`,
+    n => `🦄 Briljant, ${n}!`,
+    n => `🎊 Fantastisch!`,
+    n => `🚀 Top!`,
+    n => `💪 Yes, ${n}!`,
+    n => `🍭 Correct!`,
+    n => `🎯 Perfect!`,
+    n => `🥳 Joepie, ${n}!`,
+  ];
+  function pickGood() {
+    return goodTemplates[Math.floor(Math.random() * goodTemplates.length)](playerName);
+  }
+
+  // ── result screen ──
+  function showResult() {
+    show('screen-result');
+    const pct = score / totalQ;
+    let emoji, title, msg;
+
+    if (pct === 1)      { emoji = '🏆'; title = `Perfecte score, ${playerName}!`; msg = `Waanzinnig! Alle ${totalQ} sommen goed — jij bent een echte rekenster! 🌟`; }
+    else if (pct >= .8) { emoji = '🎉'; title = `Geweldig, ${playerName}!`;        msg = `Bijna alles goed! Nog even oefenen en je haalt zeker een perfecte score! 💪`; }
+    else if (pct >= .6) { emoji = '😊'; title = `Goed bezig, ${playerName}!`;      msg = `Je doet het al heel goed! Blijf zo doorgaan! 📚`; }
+    else if (pct >= .4) { emoji = '🌈'; title = `Blijf oefenen, ${playerName}!`;   msg = `Het gaat steeds beter! Probeer het nog een keer! 🔥`; }
+    else                { emoji = '🦋'; title = `Kom op, ${playerName}!`;           msg = `Oefening baart kunst — jij kunt het echt! 💖`; }
+
+    document.getElementById('result-emoji').textContent = emoji;
+    document.getElementById('result-title').textContent = title;
+    const multiLabel = multiTables.length <= 4
+      ? `Tafels ${multiTables.join(', ')}`
+      : `${multiTables.length} tafels gemengd`;
+    const modeTag = isMix   ? `  ${diffConfig[currentDiff].label}`
+                 : isMulti ? `  📚 ${multiLabel}` : '';
+    document.getElementById('result-score').textContent = `${score} / ${totalQ} goed${modeTag}`;
+    document.getElementById('result-msg').textContent = msg;
+
+    const starCount = Math.round(pct * 5);
+    document.getElementById('result-stars').textContent =
+      '⭐'.repeat(starCount) + '☆'.repeat(5 - starCount);
+
+    if (pct === 1) launchConfetti();
+    saveScore(starCount);
+  }
+
+  // ── scores ──
+  const SCORES_KEY = 'maaltafels_scores';
+
+  function getScores() {
+    try { return JSON.parse(localStorage.getItem(SCORES_KEY) || '[]'); }
+    catch { return []; }
+  }
+
+  function saveScore(starCount) {
+    const scores = getScores();
+    const now = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    const dateStr = `${pad(now.getDate())}-${pad(now.getMonth()+1)} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+
+    let mode;
+    if (isMulti) {
+      mode = multiTables.length <= 3 ? `Tafels ${multiTables.join(', ')}` : `${multiTables.length} tafels`;
+    } else if (isMix) {
+      mode = diffConfig[currentDiff].label;
+    } else {
+      mode = `Tafel ${currentTable}`;
+    }
+
+    scores.unshift({ date: dateStr, name: playerName, gender: playerGender, mode, score, total: totalQ, stars: starCount });
+    if (scores.length > 50) scores.length = 50;
+    localStorage.setItem(SCORES_KEY, JSON.stringify(scores));
+  }
+
+  function showScores() {
+    const scores = getScores();
+    const tbody = document.getElementById('scores-tbody');
+    const subtitle = document.getElementById('scores-subtitle');
+
+    if (scores.length === 0) {
+      subtitle.textContent = 'Nog geen scores — speel een ronde!';
+      tbody.innerHTML = '<tr><td colspan="5" class="no-scores-msg">Nog geen scores 🎮</td></tr>';
+    } else {
+      subtitle.textContent = `${scores.length} score${scores.length !== 1 ? 's' : ''} opgeslagen`;
+      tbody.innerHTML = scores.map(s => {
+        const pct = s.score / s.total;
+        const chipClass = pct === 1 ? 'chip-perfect' : pct >= .8 ? 'chip-good' : pct >= .5 ? 'chip-ok' : 'chip-low';
+        const stars = '⭐'.repeat(s.stars) + '☆'.repeat(5 - s.stars);
+        const rowClass = pct === 1 ? ' class="row-perfect"' : '';
+        return `<tr${rowClass}>
+          <td>${s.date}</td>
+          <td>${s.name}</td>
+          <td>${s.mode}</td>
+          <td><span class="score-chip ${chipClass}">${s.score}/${s.total}</span></td>
+          <td class="score-stars">${stars}</td>
+        </tr>`;
+      }).join('');
+    }
+    show('screen-scores');
+  }
+
+  function clearScores() {
+    if (!confirm('Weet je zeker dat je alle scores wilt wissen?')) return;
+    localStorage.removeItem(SCORES_KEY);
+    showScores();
+  }
+
+  // ── animations ──
+  function spawnStars() {
+    for (let i = 0; i < 6; i++) {
+      const s = document.createElement('div');
+      s.textContent = '⭐';
+      s.style.cssText = `
+        position:fixed; font-size:${20 + Math.random()*20}px;
+        left:${30 + Math.random()*40}vw; top:${20 + Math.random()*30}vh;
+        pointer-events:none; z-index:999;
+        animation: starPop .8s ease-out forwards;
+        animation-delay: ${i * 80}ms;
+      `;
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 900 + i * 80);
+    }
+  }
+
+  const styleEl = document.createElement('style');
+  styleEl.textContent = `
+    @keyframes starPop {
+      0%   { transform: scale(0) translateY(0); opacity: 1; }
+      60%  { transform: scale(1.4) translateY(-40px); opacity: 1; }
+      100% { transform: scale(1) translateY(-80px); opacity: 0; }
+    }
+  `;
+  document.head.appendChild(styleEl);
+
+  function launchConfetti() {
+    const colors = ['#f093fb','#f5576c','#4facfe','#38ef7d','#ffd200','#667eea'];
+    for (let i = 0; i < 80; i++) {
+      const c = document.createElement('div');
+      c.className = 'confetti-piece';
+      c.style.cssText = `
+        left: ${Math.random()*100}vw;
+        background: ${colors[Math.floor(Math.random()*colors.length)]};
+        width: ${6 + Math.random()*8}px;
+        height: ${6 + Math.random()*8}px;
+        border-radius: ${Math.random() > .5 ? '50%' : '2px'};
+        animation-duration: ${1.5 + Math.random()*2}s;
+        animation-delay: ${Math.random()*1.2}s;
+      `;
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 4000);
+    }
+  }
+
+  // focus name input on load
+  document.getElementById('name-input').focus();
+</script>
+</body>
+</html>

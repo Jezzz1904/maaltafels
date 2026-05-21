@@ -1,0 +1,10 @@
+{
+  "name": "Maaltafels Oefenen",
+  "short_name": "Maaltafels",
+  "description": "Oefen maaltafels op een leuke en interactieve manier",
+  "start_url": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#764ba2",
+  "theme_color": "#764ba2"
+}

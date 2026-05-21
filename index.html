@@ -822,7 +822,7 @@
     inp.value = '';
     inp.className = 'answer-input';
     inp.disabled = false;
-    setTimeout(() => inp.focus(), 50);
+    if (!isTouch) setTimeout(() => inp.focus(), 50);
   }
 
   function numPress(val) {
@@ -1024,8 +1024,9 @@
     }
   }
 
-  // focus name input on load
-  document.getElementById('name-input').focus();
+  // only auto-focus on desktop (mobile keyboard would pop up uninvited)
+  const isTouch = 'ontouchstart' in window;
+  if (!isTouch) document.getElementById('name-input').focus();
 </script>
 </body>
 </html>

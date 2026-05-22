@@ -832,7 +832,7 @@
     const modeTag = isMix   ? ` · ${diffConfig[currentDiff].label}`
                  : isMulti ? ` · Tafels ${multiTables.join(', ')}` : '';
     document.getElementById('q-label').textContent = `Vraag ${qi + 1} van ${totalQ}${modeTag}`;
-    document.getElementById('q-text').textContent = `${q.a} × ${q.b} = ?`;
+    document.getElementById('q-text').textContent = `${q.b} × ${q.a} = ?`;
     document.getElementById('progress-bar').style.width = (qi / totalQ * 100) + '%';
     document.getElementById('score-badge').textContent = `⭐ ${score}`;
     document.getElementById('feedback').textContent = '';
